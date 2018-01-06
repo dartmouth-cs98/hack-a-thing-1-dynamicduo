@@ -6,4 +6,9 @@ http://tech.nitoyon.com/en/blog/2016/01/07/go-animated-gif-gen/
 
 
 Static sites:  
-http://www.alexedwards.net/blog/serving-static-sites-with-go
+http://www.alexedwards.net/blog/serving-static-sites-with-go  
+
+go get -u github.com/disintegration/imaging  
+
+File uploading:  
+https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html  

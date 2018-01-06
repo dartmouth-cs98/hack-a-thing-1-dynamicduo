@@ -1,4 +1,5 @@
 <!-- example html code taken from tutorial http://www.alexedwards.net/blog/serving-static-sites-with-go -->
+<!-- https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html -->
 
 <!doctype html>
 <html>
@@ -9,5 +10,10 @@
 </head>
 <body>
   <h1>Hello from a static page</h1>
+  <form enctype="multipart/form-data" action="localhost:3000/example.html/upload" method="post">
+    <input type="file" name="uploadfile" />
+    <input type="hidden" name="token" value="{{.}}"/>
+    <input type="submit" value="upload" />
+</form>
 </body>
 </html>
