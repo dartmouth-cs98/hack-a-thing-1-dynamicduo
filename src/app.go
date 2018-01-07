@@ -16,6 +16,8 @@ import (
   "crypto/md5"
   "strconv"
   "html/template"
+  "image/jpeg"
+  "encoding/base64"
 )
 
 // http.HandleFunc("/upload", upload)
@@ -103,14 +105,20 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
      // fmt.Fprintf(w, "%v", handler1.Header)
 
-     f1, err := os.OpenFile(handler1.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+     f1, err := os.Open(handler1.Filename)
      if err != nil {
          fmt.Println(err)
          return
      }
      defer f1.Close()
      io.Copy(f1, file1)
-     fmt.Fprintf(w, "<html><body><img src=%v /></body></html>", handler1.Header)
+     // fmt.Fprintf(w, "<html><body><img src='%v'></img></body></html>", handler1.Filename)
+
+     // adapted from: https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang
+     // m := image.NewRGBA(image.Rect(0, 0, 240, 240))
+     // with help from https://www.devdungeon.com/content/working-images-go
+     f1data, f1type, err := image.Decode(f1)
+     writeImage(w, &f1data)
 
      // fmt.Fprintf(w, "%v", handler2.Header)
      f2, err := os.OpenFile(handler2.Filename, os.O_WRONLY|os.O_CREATE, 0666)
@@ -130,4 +138,45 @@ func upload(w http.ResponseWriter, r *http.Request) {
      defer f3.Close()
      io.Copy(f3, file3)
   }
+}
+
+// from https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang
+var ImageTemplate string = `<!DOCTYPE html>
+<html lang="en"><head></head>
+<body><img src="data:image/jpg;base64,{{.Image}}"></body>`
+
+// from https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang:
+// Writeimagewithtemplate encodes an image 'img' in jpeg format and writes it into ResponseWriter using a template.
+func writeImageWithTemplate(w http.ResponseWriter, img *image.Image) {
+
+	buffer := new(bytes.Buffer)
+	if err := jpeg.Encode(buffer, *img, nil); err != nil {
+		log.Fatalln("unable to encode image.")
+	}
+
+	str := base64.StdEncoding.EncodeToString(buffer.Bytes())
+	if tmpl, err := template.New("image").Parse(ImageTemplate); err != nil {
+		log.Println("unable to parse image template.")
+	} else {
+		data := map[string]interface{}{"Image": str}
+		if err = tmpl.Execute(w, data); err != nil {
+			log.Println("unable to execute template.")
+		}
+	}
+}
+
+// from https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang:
+// writeImage encodes an image 'img' in jpeg format and writes it into ResponseWriter.
+func writeImage(w http.ResponseWriter, img *image.Image) {
+
+	buffer := new(bytes.Buffer)
+	if err := jpeg.Encode(buffer, *img, nil); err != nil {
+		log.Println("unable to encode image.")
+	}
+
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
+	if _, err := w.Write(buffer.Bytes()); err != nil {
+		log.Println("unable to write image.")
+	}
 }
