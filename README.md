@@ -12,3 +12,6 @@ go get -u github.com/disintegration/imaging
 
 File uploading:  
 https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html  
+
+Displaying images:  
+https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang  
