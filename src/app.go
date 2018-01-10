@@ -141,11 +141,17 @@ func upload(w http.ResponseWriter, r *http.Request) {
      //https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go for encoding other file formats like jpg/png
      //http://tech.nitoyon.com/en/blog/2016/01/07/go-animated-gif-gen/ adapted using tutorial above
      //changed os to imaging
-     totalWidth := 0
-     totalHeight := 0
+     maxWidth := 0.0
+     maxHeight := 0.0
      for _, f := range files {
-       totalWidth = totalWidth + f.Bounds().Dx()
-       totalHeight = totalHeight + f.Bounds().Dy()
+       dx := float64(f.Bounds().Dx())
+       dy := float64(f.Bounds().Dy())
+       if dx > maxWidth {
+         maxWidth = dx
+       }
+       if dy > maxHeight {
+         maxHeight = dy
+       }
      }
 
      for _, f := range files {
@@ -153,8 +159,13 @@ func upload(w http.ResponseWriter, r *http.Request) {
          // inGif := &gif.GIF{}
          buf := bytes.Buffer{}
 
+         widthRatio := maxWidth/float64(f.Bounds().Dx())
+         heightRatio := maxHeight/float64(f.Bounds().Dy())
          // fscaled := ScaleImage(10, f, false)
-         gif.Encode(&buf, f, nil)
+         fscaled := ScaleImage(widthRatio, heightRatio, f, false)
+         fmt.Println("width: ", fscaled.Bounds().Dx())
+         fmt.Println("height: ", fscaled.Bounds().Dy())
+         gif.Encode(&buf, fscaled, nil)
          gifGif, _ := gif.Decode(&buf)
          // f.Close()
 
@@ -166,8 +177,8 @@ func upload(w http.ResponseWriter, r *http.Request) {
      //https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go
      final, err := os.Create("out.gif")
      if err != nil {
- 		log.Fatalf("Erroradkslfjalsdfjlaksdf")
- 	  }
+     		log.Fatalf("Erroradkslfjalsdfjlaksdf")
+   	 }
      err = gif.EncodeAll(final, outGif)
      if err != nil {
        log.Fatalf("Erroradkslfjalsdfjlaksdf", err)
@@ -221,11 +232,11 @@ func writeImage(w http.ResponseWriter, img *gif.GIF) {
 
 
 // https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go
-func ScaleImage(scale float64, img image.Image, verbose bool) image.Image {
+func ScaleImage(widthScale float64, heightScale float64, img image.Image, verbose bool) image.Image {
 	//Scale operation. Ignore if scale is 1.0
-	if scale != 1.0 {
-		newwidth := int(float64(img.Bounds().Dx()) * scale)
-		newheight := int(float64(img.Bounds().Dy()) * scale)
+	if widthScale != 1.0 && heightScale != 1.0 {
+		newwidth := int(float64(img.Bounds().Dx()) * widthScale)
+		newheight := int(float64(img.Bounds().Dy()) * heightScale)
 
 		if verbose {
 			log.Printf("Scaling image from (%d, %d) -> (%d, %d)", img.Bounds().Dx(), img.Bounds().Dy(), newwidth, newheight)
