@@ -29,7 +29,7 @@ func main() {
     fs := http.FileServer(http.Dir("static"))
     http.Handle("/", fs)
 
-    http.HandleFunc("/upload", upload)
+    http.HandleFunc("/output", generateGIF)
 
     log.Println("Listening...")
     http.ListenAndServe(":3000", nil)
@@ -38,7 +38,7 @@ func main() {
 
 // upload logic
 // taken from https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html
-func upload(w http.ResponseWriter, r *http.Request) {
+func generateGIF(w http.ResponseWriter, r *http.Request) {
   if r.Method == "GET" {
      crutime := time.Now().Unix()
      h := md5.New()
@@ -189,32 +189,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
   }
 }
 
-// from https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang
-var ImageTemplate string = `<!DOCTYPE html>
-<html lang="en"><head></head>
-<body><img src="data:image/gif;base64,{{.Image}}"></body>`
-
-// from https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang:
-// Writeimagewithtemplate encodes an image 'img' in jpeg format and writes it into ResponseWriter using a template.
-func writeImageWithTemplate(w http.ResponseWriter, img *image.Image) {
-
-	buffer := new(bytes.Buffer)
-	if err := gif.Encode(buffer, *img, nil); err != nil {
-		log.Fatalln("unable to encode image.")
-	}
-
-	str := base64.StdEncoding.EncodeToString(buffer.Bytes())
-	if tmpl, err := template.New("image").Parse(ImageTemplate); err != nil {
-		log.Println("unable to parse image template.")
-	} else {
-		data := map[string]interface{}{"Image": str}
-		if err = tmpl.Execute(w, data); err != nil {
-			log.Println("unable to execute template.")
-		}
-	}
-}
-
-// from https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang:
+// writeImage adapted from https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang:
 // writeImage encodes an image 'img' in jpeg format and writes it into ResponseWriter.
 func writeImage(w http.ResponseWriter, img *gif.GIF) {
 
@@ -231,18 +206,16 @@ func writeImage(w http.ResponseWriter, img *gif.GIF) {
 }
 
 
-// https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go
+// following function adapted from: https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go
 func ScaleImage(widthScale float64, heightScale float64, img image.Image, verbose bool) image.Image {
-	//Scale operation. Ignore if scale is 1.0
-	if widthScale != 1.0 && heightScale != 1.0 {
-		newwidth := int(float64(img.Bounds().Dx()) * widthScale)
-		newheight := int(float64(img.Bounds().Dy()) * heightScale)
 
-		if verbose {
-			log.Printf("Scaling image from (%d, %d) -> (%d, %d)", img.Bounds().Dx(), img.Bounds().Dy(), newwidth, newheight)
-		}
-		img = imaging.Resize(img, newwidth, newheight, imaging.Lanczos)
+	newwidth := int(float64(img.Bounds().Dx()) * widthScale)
+	newheight := int(float64(img.Bounds().Dy()) * heightScale)
+
+	if verbose {
+		log.Printf("Scaling image from (%d, %d) -> (%d, %d)", img.Bounds().Dx(), img.Bounds().Dy(), newwidth, newheight)
 	}
-	return img
+	img = imaging.Resize(img, newwidth, newheight, imaging.Lanczos)
 
+	return img
 }
