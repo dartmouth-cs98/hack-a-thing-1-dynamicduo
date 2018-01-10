@@ -16,12 +16,9 @@ import (
   "crypto/md5"
   "strconv"
   "html/template"
-  "encoding/base64"
   _ "image/jpeg"
   _ "image/png"
 )
-
-// http.HandleFunc("/upload", upload)
 
 func main() {
   //use FileServer and Handle function to set up port to Listening
@@ -33,7 +30,6 @@ func main() {
 
     log.Println("Listening...")
     http.ListenAndServe(":3000", nil)
-
 }
 
 // upload logic
@@ -68,45 +64,33 @@ func generateGIF(w http.ResponseWriter, r *http.Request) {
      defer file2.Close()
      defer file3.Close()
 
-     // fmt.Fprintf(w, "%v", handler1.Header)
-
-     // f1, err := os.OpenFile(handler1.Filename, os.O_WRONLY|os.O_CREATE, 0666)
      f1out, err := os.Create(handler1.Filename)
-     // f1, err := os.Open(handler1.Filename)
      if err != nil {
          fmt.Println(err)
          return
      }
-     // defer f1.Close()
      io.Copy(f1out, file1)
      if err != nil {
        fmt.Println("err: ", err)
      }
 
      // adapted from: https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang
-     // m := image.NewRGBA(image.Rect(0, 0, 240, 240))
      // with help from https://www.devdungeon.com/content/working-images-go
-     // f1out.seek(0,0)
      f1p, err := os.Open(handler1.Filename)
      f1data, f1type, err := image.Decode(f1p)
      if err != nil {
        fmt.Println("err: %v", err)
      }
-
      fmt.Println(f1type)
-     // writeImage(w, &f1data)
-     // fmt.Fprintf(w, "%v", handler2.Header)
-     // createf2, err := os.OpenFile(handler2.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+
+
      f2out, err := os.Create(handler2.Filename)
-     // f2, err := os.Open(handler2.Filename)
      if err != nil {
          fmt.Println(err)
          return
      }
-     // defer f2.Close()
      io.Copy(f2out, file2)
 
-     // f2out.seek(0,0)
      f2p, err := os.Open(handler2.Filename)
      f2data, f2type, err := image.Decode(f2p)
      if err != nil {
@@ -114,33 +98,29 @@ func generateGIF(w http.ResponseWriter, r *http.Request) {
      }
      fmt.Println(f2type)
 
-     // fmt.Fprintf(w, "%v", handler3.Header)
-     // createf3, err := os.OpenFile(handler3.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+
      f3out, err := os.Create(handler3.Filename)
-     // f3, err := os.Open(handler3.Filename)
      if err != nil {
          fmt.Println(err)
          return
      }
-     // defer f3.Close()
      io.Copy(f3out, file3)
-     // f3out.seek(0,0)
+
      f3p, err := os.Open(handler3.Filename)
      f3data, f3type, err := image.Decode(f3p)
      if err != nil {
        fmt.Println("err: ", err)
      }
-
      fmt.Println(f3type)
 
-   //from tutorial at http://tech.nitoyon.com/en/blog/2016/01/07/go-animated-gif-gen/
+     //from tutorial at http://tech.nitoyon.com/en/blog/2016/01/07/go-animated-gif-gen/
      // load static image and construct outGif
      outGif := &gif.GIF{}
      files := []image.Image {f1data, f2data, f3data}
 
-     //https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go for encoding other file formats like jpg/png
-     //http://tech.nitoyon.com/en/blog/2016/01/07/go-animated-gif-gen/ adapted using tutorial above
-     //changed os to imaging
+     // figure out largest width and largest height of images uploaded by user
+     // so that we can scale the images all to same width & height
+     // otherwise, we cannot merge them into 1 GIF
      maxWidth := 0.0
      maxHeight := 0.0
      for _, f := range files {
@@ -154,20 +134,21 @@ func generateGIF(w http.ResponseWriter, r *http.Request) {
        }
      }
 
+     //https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go for encoding other file formats like jpg/png
+     //http://tech.nitoyon.com/en/blog/2016/01/07/go-animated-gif-gen/ adapted using tutorial above
+     //changed os to imaging
      for _, f := range files {
-         // f, _ := imaging.Open(name)
-         // inGif := &gif.GIF{}
+
          buf := bytes.Buffer{}
 
          widthRatio := maxWidth/float64(f.Bounds().Dx())
          heightRatio := maxHeight/float64(f.Bounds().Dy())
-         // fscaled := ScaleImage(10, f, false)
+
          fscaled := ScaleImage(widthRatio, heightRatio, f, false)
          fmt.Println("width: ", fscaled.Bounds().Dx())
          fmt.Println("height: ", fscaled.Bounds().Dy())
          gif.Encode(&buf, fscaled, nil)
          gifGif, _ := gif.Decode(&buf)
-         // f.Close()
 
          outGif.Image = append(outGif.Image, gifGif.(*image.Paletted))
          outGif.Delay = append(outGif.Delay, 0)
