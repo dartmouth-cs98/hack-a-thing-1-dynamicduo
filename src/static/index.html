@@ -5,11 +5,11 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>A static page</title>
+  <title>GIF MAKER</title>
   <link rel="stylesheet" href="/stylesheets/main.css">
 </head>
 <body>
-  <h1>Hello from a static page</h1>
+  <h1>Choose 3 images (not 1, not 2, but exactly 3 images) to turn into a GIF!</h1>
   <form enctype="multipart/form-data" action="/output" method="post">
     <input type="file" name="file1" />
     <input type="file" name="file2" />
@@ -17,5 +17,6 @@
     <input type="hidden" name="token" value="{{.}}"/>
     <input type="submit" value="Create GIF" />
 </form>
+<h3>We don't like developing using Go.</h3>
 </body>
 </html>

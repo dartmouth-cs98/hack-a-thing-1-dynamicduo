@@ -1,6 +1,18 @@
-Download:  
+<h1>
+To run:  
+</h1>
+
+Download Go:  
 https://golang.org/doc/install?download=go1.9.2.windows-amd64.msi   
-We also used a package: in project directory, enter the command: <code>go get -u github.com/disintegration/imaging  </code>
+We also used a package: from the project directory, enter the command: <code>go get -u github.com/disintegration/imaging  </code>
+<code>
+cd src  
+go run app.go
+</code>
+
+<h1>
+Workflow/References:  
+</h1>
 
 We started off by creating GIFs from static images stored in our project directory. We used code from the following example:  
 http://tech.nitoyon.com/en/blog/2016/01/07/go-animated-gif-gen/
