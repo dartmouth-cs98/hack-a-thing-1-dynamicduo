@@ -1,14 +1,14 @@
 package main
 
-import "fmt"
-import "image"
-import "image/gif"
-import "os"
-import "bytes"
 // https://github.com/disintegration/imaging
 import "github.com/disintegration/imaging"
 
 import (
+  "fmt"
+  "image"
+  "image/gif"
+  "os"
+  "bytes"
   "log"
   "net/http"
   "io"
@@ -33,7 +33,7 @@ func main() {
 }
 
 // upload logic
-// taken from https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html
+// adapted from 'upload' function at https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html
 func generateGIF(w http.ResponseWriter, r *http.Request) {
   if r.Method == "GET" {
      crutime := time.Now().Unix()
@@ -145,8 +145,8 @@ func generateGIF(w http.ResponseWriter, r *http.Request) {
          heightRatio := maxHeight/float64(f.Bounds().Dy())
 
          fscaled := ScaleImage(widthRatio, heightRatio, f, false)
-         fmt.Println("width: ", fscaled.Bounds().Dx())
-         fmt.Println("height: ", fscaled.Bounds().Dy())
+         // fmt.Println("width: ", fscaled.Bounds().Dx())
+         // fmt.Println("height: ", fscaled.Bounds().Dy())
          gif.Encode(&buf, fscaled, nil)
          gifGif, _ := gif.Decode(&buf)
 
