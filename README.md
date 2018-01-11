@@ -1,5 +1,5 @@
 <h1>
-Title here
+GIF a little bit
 </h1>
 <h3> Divya Kalidindi and Drew Waterman </h3>
 
@@ -28,8 +28,13 @@ cd src
 <code>
 go run app.go
 </code>  
-
 Then open your browser to `localhost:3000`  
+
+<h2>
+Work Distribution:
+</h2>
+
+The two of us pair programmed throughout most of this project. We mainly worked on Drew's computer, but both spent time together working on solutions, researching tutorials, looking through documentation, and debugging. Divya styled the webpage, Drew worked on the README, and we coded the solution together.  
 
 <h2>
 Workflow/References:  
