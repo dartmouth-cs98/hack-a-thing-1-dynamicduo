@@ -6,7 +6,7 @@ GIF a little bit
 <h2>
 About:   
 </h2>
-We built a simple website that allows a user to choose exactly three images and to create a GIF out of them. The images can be of any type or size; our program will scale each of the images so that the resulting GIF's width will be the same as the width of the widest image chosen by the user, and the resulting GIF's height will be the height of the tallest image uploaded by the user. Upon clicking 'Create GIF', the user is taken to a different page, where they will see the resulting GIF that was created from the three images. A copy of each of the three original images also gets saved to the program directory, since that's the only way we could figure out how to do this.  
+We built a simple website that allows a user to choose exactly three images and to create a GIF out of them. The images can be of any type or size; our program will scale each of the images so that the resulting GIF's width will be the same as the width of the widest image chosen by the user, and the resulting GIF's height will be the height of the tallest image uploaded by the user. Upon clicking 'Create GIF', the user is taken to a different page, where they will see the resulting GIF that was created from the three images. A copy of each of the three original images also gets saved to the program directory, since that's the only way we could figure out how to do this. Once the user clicks 'Create GIF', they're gonna need to wait a while before anything happens, because our program is just slow.  
 
 
 <h2>
@@ -29,6 +29,7 @@ cd src
 go run app.go
 </code>  
 Then open your browser to `localhost:3000`  
+Don't forget that nothing will happen for a while after you click 'Create GIF'. That's fine! Patience is a virtue. Just keep waiting until you're redirected.  
 
 <h2>
 Work Distribution:
