@@ -25,7 +25,6 @@ Once everything has been downloaded:
 <code>
 cd src  
 </code>  
-  
 <code>
 go run app.go
 </code>  
