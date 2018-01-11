@@ -24,10 +24,12 @@ We also used a package: from the project directory, enter the command: <code>go 
 Once everything has been downloaded:  
 <code>
 cd src  
-</code>
+</code>  
+  
 <code>
 go run app.go
-</code>
+</code>  
+
 Then open your browser to `localhost:3000`  
 
 <h2>
@@ -44,7 +46,7 @@ This article helped us provide functionality for allowing users to upload files 
 https://astaxie.gitbooks.io/build-web-application-with-golang/en/04.5.html  
 
 The following link helped us to display the GIFs we created on a new webpage:  
-https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang  
+https://www.sanarias.com/blog/1214PlayingwithimagesinHTTPresponseingolang, and we got help from another article as well to learn how to encode and decode images properly: https://www.devdungeon.com/content/working-images-go  
 
-For scaling and saving a GIF:  
+For scaling and saving a GIF, we drew from code from the following repository:  
 https://github.com/srinathh/goanigiffy/blob/master/goanigiffy.go
